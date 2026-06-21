@@ -698,42 +698,70 @@
         display:none;
     }
 }
+@media (max-width: 768px) {
+
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  .navbar-brand {
+    font-size: 22px;
+    margin: 0;
+  }
+
+  .navbar-toggler {
+    padding: 5px 8px;
+    margin: 0;
+    border: none;
+  }
+
+  .navbar-collapse {
+    text-align: center;
+    background: #fff;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .navbar-nav {
+    width: 100%;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 12px 0;
+    font-size: 16px;
+  }
+}
     </style>
 </head>
 
 <body>
     <section id="header" >
-        <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
-            <div class="container-fluid">
-                <a class="navbar-brand " href="#"><img src="picture/logo.jpg" alt="DR Coffee House logo"></a>
-                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center" style="gap: 8px;">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#OFFER">Offers</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="#Exclusive Coffee">Exclusive Coffee</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="#ALLMENU">All Menu</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link " href="#about">About</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link " href="#contact">Contact</a>
-                        </li>
-                    </ul>
-                    
-                </div>
-            </div>
-        </nav>
+       <nav class="navbar navbar-expand-lg">
+  <div class="container">
+
+    <a class="navbar-brand" href="#">
+      Logo
+    </a>
+
+    <button class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
         <div class="container" >
             <div class="row align-items-center" style="min-height: 92vh; padding-top: 110px;">
                 <div class="col-lg-6 col-12" id="sectionheading" data-aos="zoom-in" data-aos-duration="1000" >
