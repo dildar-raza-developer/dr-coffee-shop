@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DR Coffee House</title>
+    <link rel="stylesheet" href="bootstrap-5.0.2-dist/css/bootstrap.min.css">
+    <script src="bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           DESIGN TOKENS
+        ===================================================== */
+        :root{
+            --espresso:        #1a1210;
+            --espresso-soft:   #241712;
+            --coffee-deep:     #2b1810;
+            --coffee-card:     #2f1c14;
+            --cream:           #f6ecd9;
+            --cream-soft:      #efe3cb;
+            --copper:          #d97b29;
+            --copper-light:    #e8a25c;
+            --gold:            #e8b04b;
+            --line:            rgba(246,236,217,0.12);
+
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body:    'Poppins', -apple-system, sans-serif;
+
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+
+            --shadow-soft: 0 18px 40px -10px rgba(0,0,0,0.55);
+            --shadow-glow: 0 0 0 1px rgba(217,123,41,0.25), 0 20px 45px -15px rgba(217,123,41,0.25);
+        }
+
+        *{ box-sizing: border-box; }
+
+        html{ scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--espresso);
+            background-image:
+                linear-gradient(180deg, rgba(15,9,7,0.78) 0%, rgba(15,9,7,0.88) 55%, rgba(15,9,7,0.96) 100%),
+                url('picture/bg1.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            position: relative;
+            font-family: var(--font-body);
+            color: var(--cream-soft);
+            overflow-x: hidden;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px){
+            body{ background-attachment: scroll; }
+        }
+
+        /* subtle grain texture for warmth/depth */
+        body::before{
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        h1, h2, h3, h4, .display-3 {
+            font-family: var(--font-display);
+        }
+
+        p, span, a, li, label, input, textarea, button {
+            font-family: var(--font-body);
+        }
+
+        ::selection{ background: var(--copper); color: var(--espresso); }
+
+        a{ text-decoration: none; }
+
+        a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+            outline: 2px solid var(--gold);
+            outline-offset: 3px;
+        }
+
+        .eyebrow{
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-body);
+            font-size: clamp(0.7rem, 0.8vw, 0.8rem);
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--copper-light);
+            font-weight: 600;
+        }
+        .eyebrow::before{
+            content: "";
+            width: 28px;
+            height: 1px;
+            background: var(--copper-light);
+            display: inline-block;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+        .navbar-custom {
+            background-color: rgba(20,13,10,0.55) !important;
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            border-bottom: 1px solid var(--line);
+            transition: background-color .35s ease, box-shadow .35s ease;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .navbar-custom.scrolled{
+            background-color: rgba(15,9,7,0.92) !important;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
+        }
+
+        .navbar-custom .nav-link,
+        .navbar-custom .navbar-brand,
+        .navbar-custom .dropdown-toggle,
+        .navbar-custom .btn {
+            color: var(--cream) !important;
+        }
+
+        .navbar-custom .navbar-brand img{
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            height: 42px;
+            width: auto;
+            max-width: 170px;
+            object-fit: contain;
+        }
+
+        .navbar-custom .nav-link{
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            font-size: 0.95rem;
+            padding: 8px 16px !important;
+        }
+
+        .navbar-custom .dropdown-menu {
+            background-color: rgba(15,9,7,0.95);
+            border: 1px solid var(--line);
+        }
+
+        .navbar-custom .dropdown-item {
+            color: var(--cream);
+        }
+
+        .navbar-custom .dropdown-item:hover {
+            background-color: var(--copper);
+            color: var(--espresso);
+        }
+
+        #searchbtn{
+            transition: 0.3s ease;
+            border-color: var(--copper-light);
+        }
+        #searchbtn:hover{
+            background-color: var(--copper);
+            border-color: var(--copper);
+            color: var(--espresso) !important;
+        }
+        #searchinput{
+            background-color: rgba(255,255,255,0.06);
+            border: 1px solid var(--line);
+            color: var(--cream);
+        }
+        #searchinput::placeholder{ color: rgba(246,236,217,0.5); }
+        #searchinput:focus{
+            background-color: rgba(255,255,255,0.1);
+            border-color: var(--copper-light);
+            box-shadow: none;
+            color: var(--cream);
+        }
+
+        #navbarSupportedContent ul li a{
+            transition: 0.3s ease;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        #navbarSupportedContent ul li a:hover{
+            background-color: rgba(217,123,41,0.18);
+            color: var(--copper-light) !important;
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+        #header{
+            position: relative;
+        }
+
+        #sectionheading{
+            color: var(--cream);
+        }
+
+        #sectionheading h1{
+            font-size: clamp(2.4rem, 6vw, 5.2rem);
+            line-height: 1.08;
+            margin-bottom: 22px;
+            letter-spacing: -0.01em;
+        }
+
+        #sectionheading h3.lead{
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: clamp(1rem, 1.4vw, 1.15rem);
+            color: rgba(246,236,217,0.78);
+            max-width: 540px;
+            margin-bottom: 32px;
+        }
+
+        #sectionorder{
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--copper) 0%, #b85f17 100%);
+            font-size: clamp(0.95rem, 1.1vw, 1.05rem) !important;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            color: var(--espresso) !important;
+            border-radius: 50px !important;
+            padding: 14px 32px !important;
+            box-shadow: 0 14px 30px -8px rgba(217,123,41,0.55);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        #sectionorder:hover{
+            color: var(--espresso) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 18px 36px -6px rgba(217,123,41,0.7);
+        }
+
+        .hero-img-wrap{
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-img-wrap img{
+            max-width: 100%;
+            filter: drop-shadow(0 30px 50px rgba(0,0,0,0.6));
+            animation: floaty 6s ease-in-out infinite;
+        }
+
+        @keyframes floaty{
+            0%, 100%{ transform: translateY(0px); }
+            50%{ transform: translateY(-16px); }
+        }
+
+        .hero-ring{
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            max-width: 70%;
+            max-height: 70%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            border: 1px dashed rgba(217,123,41,0.35);
+            border-radius: 50%;
+            z-index: 0;
+            animation: spin 30s linear infinite;
+        }
+
+        @keyframes spin{ to{ transform: translate(-50%,-50%) rotate(360deg); } }
+
+        @media (prefers-reduced-motion: reduce){
+            .hero-img-wrap img, .hero-ring{ animation: none; }
+        }
+
+        /* =====================================================
+           SECTION HEADERS
+        ===================================================== */
+        .section-title{
+            font-size: clamp(2.2rem, 6vw, 4.2rem);
+            text-align: center;
+            color: var(--cream);
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .section-title span{ color: var(--copper); }
+
+        .section-kicker{
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        /* =====================================================
+           OFFER STRIP
+        ===================================================== */
+        .offer-strip{
+            background: linear-gradient(135deg, rgba(217,123,41,0.14), rgba(217,123,41,0.03));
+            border: 1px solid rgba(217,123,41,0.25);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+        }
+
+        /* =====================================================
+           PRODUCT CARDS (offer row + full menu)
+        ===================================================== */
+        #container2 .card,
+        .menu-card {
+            background: linear-gradient(160deg, var(--coffee-card), var(--coffee-deep));
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            height: 100%;
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+
+        #container2 .card .card-img-top,
+        .menu-card .card-img-top{
+            height: 230px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--line);
+        }
+
+        #container2 .card:hover,
+        .menu-card:hover{
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+            border-color: rgba(217,123,41,0.4);
+        }
+
+        .card-body{
+            padding: 20px;
+        }
+
+        .card-name{
+            font-family: var(--font-display);
+            color: var(--cream);
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+        }
+
+        .card-price{
+            color: var(--copper-light);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .btn-view{
+            width: 100%;
+            background: transparent;
+            border: 1.5px solid var(--copper);
+            color: var(--copper-light) !important;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 10px 18px;
+            border-radius: 50px;
+            transition: 0.3s ease;
+        }
+        .btn-view:hover{
+            background: var(--copper);
+            color: var(--espresso) !important;
+            border-color: var(--copper);
+        }
+
+        /* =====================================================
+           MODALS
+        ===================================================== */
+        .modal-content{
+            background: linear-gradient(160deg, var(--coffee-card), var(--coffee-deep));
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            color: var(--cream-soft);
+        }
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-footer {
+            border-top: 1px solid var(--line);
+        }
+        .modal-body h1{
+            color: var(--cream);
+            font-size: 1.6rem !important;
+        }
+        .modal-body p{
+            color: rgba(246,236,217,0.78);
+            font-size: 0.95rem;
+            white-space: pre-line;
+        }
+        .modal-body img{
+            border-radius: var(--radius-md);
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .btn-close{
+            filter: invert(1) grayscale(100%) brightness(2);
+        }
+        .btn-secondary{
+            background-color: transparent;
+            border: 1px solid var(--line);
+            color: var(--cream-soft);
+        }
+        .btn-secondary:hover{
+            background-color: rgba(255,255,255,0.08);
+        }
+        .btn-primary{
+            background-color: var(--copper);
+            border-color: var(--copper);
+            color: var(--espresso);
+            font-weight: 600;
+        }
+        .btn-primary:hover{
+            background-color: var(--copper-light);
+            border-color: var(--copper-light);
+            color: var(--espresso);
+        }
+
+        /* =====================================================
+           EXCLUSIVE / JAMAICAN SECTION
+        ===================================================== */
+        #jamaicansection{
+            background: linear-gradient(135deg, #3a0f0a, #220705);
+            border: 1px solid rgba(217,123,41,0.2);
+            box-shadow: var(--shadow-soft);
+            padding: 10px 0;
+        }
+        #jamaicansection img{
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 45px -12px rgba(0,0,0,0.6);
+        }
+
+        /* =====================================================
+           ABOUT
+        ===================================================== */
+        .about-block{
+            background: linear-gradient(135deg, rgba(51,4,4,0.9), rgba(28,10,7,0.95));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-soft);
+        }
+        .about-block p strong{ color: var(--copper-light); }
+
+        /* =====================================================
+           CONTACT
+        ===================================================== */
+        .contact-section .form-control{
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--line);
+            color: var(--cream);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+        }
+        .contact-section .form-control::placeholder{ color: rgba(246,236,217,0.45); }
+        .contact-section .form-control:focus{
+            background-color: rgba(255,255,255,0.08);
+            border-color: var(--copper-light);
+            box-shadow: 0 0 0 3px rgba(217,123,41,0.18);
+            color: var(--cream);
+        }
+        .contact-section .btn{
+            background-color: var(--copper);
+            color: var(--espresso);
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 10px 28px;
+            border: none;
+            transition: 0.3s ease;
+        }
+        .contact-section .btn:hover{
+            background-color: var(--copper-light);
+            transform: translateY(-2px);
+        }
+        .map-responsive {
+            overflow: hidden;
+            padding-bottom: 75%;
+            position: relative;
+            height: 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--line);
+        }
+        .map-responsive iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            border: 0;
+            filter: grayscale(25%) contrast(1.05);
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+        footer {
+            background-color: var(--espresso-soft);
+            color: rgba(246,236,217,0.85);
+            padding: 50px 0 20px;
+            border-top: 1px solid var(--line);
+        }
+        footer h5{
+            font-family: var(--font-display);
+        }
+        footer p, footer li{
+            color: rgba(246,236,217,0.65);
+            font-size: 0.92rem;
+        }
+        footer a {
+            color: rgba(246,236,217,0.65);
+            transition: color 0.25s ease;
+        }
+        footer a:hover {
+            color: var(--copper-light);
+        }
+        footer .list-unstyled li{ margin-bottom: 8px; }
+        .footer-bottom{
+            border-top: 1px solid var(--line);
+            margin-top: 30px;
+            padding-top: 18px;
+            font-size: 0.85rem;
+            color: rgba(246,236,217,0.5);
+        }
+        .social-icons a{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid var(--line);
+            margin-right: 8px;
+            color: var(--cream-soft);
+            transition: 0.3s ease;
+        }
+        .social-icons a:hover{
+            background: var(--copper);
+            color: var(--espresso);
+            border-color: var(--copper);
+            transform: translateY(-3px);
+        }
+
+        /* =====================================================
+           BACK TO TOP
+        ===================================================== */
+        #backToTop{
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--copper);
+            color: var(--espresso);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px -6px rgba(217,123,41,0.6);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: 0.3s ease;
+            z-index: 999;
+            cursor: pointer;
+        }
+        #backToTop.show{
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #backToTop:hover{ background: var(--copper-light); }
+
+        /* =====================================================
+           RESPONSIVE — SINGLE COMPREHENSIVE MEDIA QUERY
+           Covers tablets + phones (max-width: 991px) so the
+           entire site (navbar, hero, offers, menu, modals,
+           about, contact, footer) adapts together.
+        ===================================================== */
+        @media (max-width: 991.98px){
+
+            /* ---- Navbar ---- */
+            #navbarSupportedContent{
+                background: rgba(15,9,7,0.97);
+                border-radius: var(--radius-md);
+                padding: 16px;
+                margin-top: 12px;
+            }
+            #navbarSupportedContent ul{
+                gap: 6px !important;
+            }
+            #navbarSupportedContent form{
+                margin-top: 14px;
+            }
+
+            /* ---- Hero ---- */
+            body{ font-size: 15px; }
+            #sectionheading{ text-align: center; margin-top: 90px !important; }
+            #sectionheading h1{ font-size: clamp(2rem, 8vw, 3.2rem); }
+            #sectionheading h3.lead{ margin-left: auto; margin-right: auto; }
+            .hero-img-wrap{ margin-top: 30px; }
+
+            /* ---- Section titles ---- */
+            .section-title{ font-size: clamp(1.8rem, 8vw, 2.8rem); }
+            .offer-strip h1{ font-size: clamp(1.8rem, 8vw, 2.6rem) !important; }
+
+            /* ---- Exclusive / Jamaican section ---- */
+            #jamaicansection .col-12{ text-align: center; padding: 20px !important; }
+
+            /* ---- Cards (offer + menu) ---- */
+            #container2 .card .card-img-top,
+            .menu-card .card-img-top{ height: 200px; }
+
+            /* ---- Modals ---- */
+            .modal-body .row .col-12{ text-align: center; margin-bottom: 16px; }
+            .modal-body img{ margin: 0 auto 16px; display: block; }
+
+            /* ---- About ---- */
+            .about-block{ text-align: center; }
+            .about-block .col-12{ margin-bottom: 10px; }
+
+            /* ---- Footer ---- */
+            footer .col-12{ text-align: center; }
+            .social-icons{ display:flex; justify-content:center; }
+
+            /* ---- Back to top ---- */
+            #backToTop{ right: 16px; bottom: 16px; width: 42px; height: 42px; }
+        }
+    </style>
+</head>
+
+<body>
+    <section id="header" >
+        <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
+            <div class="container-fluid">
+                <a class="navbar-brand " href="#"><img src="picture/logo.jpg" alt="DR Coffee House logo"></a>
+                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center" style="gap: 8px;">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#OFFER">Offers</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#Exclusive Coffee">Exclusive Coffee</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="#ALLMENU">All Menu</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link " href="#about">About</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link " href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2 " type="search" placeholder="Search" aria-label="Search" id="searchinput">
+                        <a href="index.html"><button class="btn btn-outline-light" type="submit" id="searchbtn">Search</button></a>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div class="container" >
+            <div class="row align-items-center" style="min-height: 92vh; padding-top: 110px;">
+                <div class="col-lg-6 col-12" id="sectionheading" data-aos="zoom-in" data-aos-duration="1000" >
+                    <span class="eyebrow">Small batch &middot; Hand roasted</span>
+                    <h1 class="fw-bold mt-3">Brewed <span style="color: var(--copper);">to</span> Perfection</h1>
+                    <h3 class="lead"> Every cup of our coffee is a story—carefully sourced, ethically roasted, and passionately brewed. Whether you crave a bold espresso or a smooth latte, our handcrafted beverages deliver warmth, richness, and comfort in every sip. Welcome to the true taste of coffee.</h3>
+                    <a href="#ALLMENU" id="sectionorder">Order Now <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                    <div class="hero-img-wrap">
+                        <div class="hero-ring" aria-hidden="true"></div>
+                        <img src="picture/pic3-Picsart-BackgroundRemover.jpg" alt="Signature handcrafted coffee" style="width:100%; max-width: 460px;" data-aos="fade-left" data-aos-duration="1200">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="container" style="margin-top: 50px;" id="OFFER">
+        <div class="offer-strip text-center" data-aos="fade-up" data-aos-duration="800">
+            <span class="eyebrow d-flex justify-content-center mb-2">Limited time</span>
+            <h1 style="font-size: clamp(1.8rem, 5vw, 3.4rem); color: var(--cream); margin:0;">BIG <span style="color: var(--copper);">OFFER</span> — 20% OFF</h1>
+        </div>
+    </div>
+    <div class="container mt-5" id="container2">
+        <div class="section-kicker"><span class="eyebrow">This week's picks</span></div>
+        <div class="row g-4">
+
+          <!-- Iced Coffee Card -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card" data-aos="fade-up" data-aos-duration="700">
+              <img src="picture/Iced Coffee.jpg" class="card-img-top" alt="Iced Coffee">
+              <div class="card-body text-center">
+                <h3 class="card-name">Iced Coffee</h3>
+                <span class="card-price">$10</span>
+                <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#coffeeModal" >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Iced Coffee Modal -->
+          <div class="modal fade" id="coffeeModal" tabindex="-1" aria-labelledby="coffeeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <img src="picture/Iced Coffee.jpg" alt="Iced Coffee" style="width:100%; height:200px; object-fit:cover;">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <h1 style="font-size: 1.7rem;">Iced Coffee</h1>
+                      <h1 style="font-size: 1.1rem;">Ingredients</h1>
+                      <p>Ice, Milk or Cream, Sugar or Sweetener, Flavored Syrup (vanilla, caramel, hazelnut)</p>
+                      <h3 style="color: var(--copper-light); font-size: 2rem;">$10</h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latte Card -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+              <img src="picture/Latte.jpg" class="card-img-top" alt="Latte">
+              <div class="card-body text-center">
+                <h3 class="card-name">Latte</h3>
+                <span class="card-price">$23</span>
+                <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#latteModal">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latte Modal -->
+          <div class="modal fade" id="latteModal" tabindex="-1" aria-labelledby="latteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <img src="picture/Latte.jpg" alt="Latte" style="width:100%; height:200px; object-fit:cover;">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <h1 style="font-size: 1.7rem;">Latte</h1>
+                      <h1 style="font-size: 1.1rem;">Ingredients</h1>
+                      <p>Espresso, Steamed Milk, Foamed Milk, Optional: Sugar or Vanilla Syrup</p>
+                      <h3 style="color: var(--copper-light); font-size: 2rem;">$23</h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Americano Card -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+              <img src="picture/Americano.jpg" class="card-img-top" alt="Americano">
+              <div class="card-body text-center">
+                <h3 class="card-name">Americano</h3>
+                <span class="card-price">$20</span>
+                <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#americanoModal">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Americano Modal -->
+          <div class="modal fade" id="americanoModal" tabindex="-1" aria-labelledby="americanoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <img src="picture/Americano.jpg" alt="Americano" style="width:100%; height:200px; object-fit:cover;">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <h1 style="font-size: 1.7rem;">Americano</h1>
+                      <h1 style="font-size: 1.1rem;">Ingredients</h1>
+                      <p>Espresso, Hot Water, Optional: Sugar</p>
+                      <h3 style="color: var(--copper-light); font-size: 2rem;">$20</h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="container text-center " style="margin-top: 100px;" id="Exclusive Coffee">
+            <span class="eyebrow d-flex justify-content-center mb-2">Rare &amp; reserved</span>
+            <h1 class="section-title" >Our <span>Most</span> Exclusive Coffee</h1>
+        </div>
+        <div class="container mt-4" id="jamaicansection">
+          <div class="row align-items-center g-4">
+            <!-- Left Column: Text Content -->
+            <div class="col-12 col-lg-6 p-4 p-md-5" style="color: var(--cream-soft);" data-aos="zoom-in" data-aos-duration="800">
+              <h1 style="font-family: var(--font-display); color: var(--gold); font-size: clamp(1.8rem, 4vw, 2.6rem);">
+                Jamaican Blue Mountain Coffee
+              </h1>
+              <p style="font-size: 1.05rem; margin-top: 24px; color: rgba(246,236,217,0.78);">
+                Jamaican Blue Mountain Coffee is one of the most premium and high-quality coffees in the world. Grown exclusively in the Blue Mountains of Jamaica, its unique taste and smoothness are attributed to its growing conditions and processing methods.
+              </p>
+              <!-- Button to Trigger Modal -->
+              <div class="mt-4">
+                <button type="button" class="btn-view" style="width:auto; padding: 12px 30px;" data-bs-toggle="modal" data-bs-target="#jamaicanModal">
+                  View Details
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Column: Image -->
+            <div class="col-12 col-lg-6 text-center p-4" data-aos="fade-down-left" data-aos-duration="800">
+              <img src="picture/pic1-Picsart-BackgroundRemover.jpg" alt="Jamaican Blue Mountain Coffee" class="img-fluid rounded" style="max-width: 360px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Section -->
+        <div class="modal fade" id="jamaicanModal" tabindex="-1" aria-labelledby="jamaicanModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-md-7">
+                    <h1 style="font-size: 1.5rem;">Ingredients</h1>
+                    <p>It's made from 100% Arabica coffee beans, specifically the Typica variety.</p>
+                    <p>It grows in the Blue Mountains of Jamaica, at elevations between 3,000 and 5,500 feet. The cool climate, rich volcanic soil, frequent mist, and high rainfall all create perfect conditions for exceptional coffee beans.</p>
+                  </div>
+                  <div class="col-12 col-md-5 text-center">
+                    <img src="picture/pic1-Picsart-BackgroundRemover.jpg" alt="Jamaican Blue Mountain Coffee" style="width:100%; max-width:280px;">
+                    <h1 style="color: var(--copper-light); margin-top: 14px;">$100</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="index.html"> <button type="button" class="btn btn-primary">Order</button></a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+<!-- menu -->
+<div class="container">
+  <div class="col-12 text-center mt-5" id="ALLMENU">
+    <span class="eyebrow d-flex justify-content-center mb-2">The full lineup</span>
+    <h1 class="section-title">OUR <span>MENU</span></h1>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row g-4">
+
+    <!-- Espresso -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600">
+        <img src="picture/Espresso.jpg" class="card-img-top" alt="Espresso">
+        <div class="card-body text-center">
+          <h3 class="card-name">Espresso</h3>
+          <span class="card-price">$17</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card1Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card1Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Espresso.jpg" alt="Espresso" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$17</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>Water (used to brew the espresso under pressure), sugar (optional, added after brewing), milk or cream (optional, for drinks like lattes, cappuccinos, or macchiatos).</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Turkish Coffee -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="80">
+        <img src="picture/Turkish Coffee.jpg" class="card-img-top" alt="Turkish Coffee">
+        <div class="card-body text-center">
+          <h3 class="card-name">Turkish Coffee</h3>
+          <span class="card-price">$45</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card2Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card2Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Turkish Coffee.jpg" alt="Turkish Coffee" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$45</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>Finely ground Turkish coffee (almost powder-like, often made from Arabica beans), cold water, sugar (optional, added during brewing, not after).</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Macchiato -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="160">
+        <img src="picture/Macchiato.jpg" class="card-img-top" alt="Macchiato">
+        <div class="card-body text-center">
+          <h3 class="card-name">Macchiato</h3>
+          <span class="card-price">$18</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card3Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card3Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Macchiato.jpg" alt="Macchiato" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$18</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>Steamed milk (about 3/4 cup), one shot of espresso slowly poured over the milk, optional flavors such as vanilla or caramel syrup.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mocha -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600">
+        <img src="picture/Mocha (Caffè Mocha).jpg" class="card-img-top" alt="Mocha">
+        <div class="card-body text-center">
+          <h3 class="card-name">Mocha</h3>
+          <span class="card-price">$12</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card4Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card4Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Mocha (Caffè Mocha).jpg" alt="Mocha" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$12</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>One shot of espresso or strong brewed coffee, 2-3 teaspoons of chocolate syrup or cocoa powder with sugar, one cup of steamed milk, whipped cream and chocolate shavings as optional garnish.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cappuccino -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="80">
+        <img src="picture/Cappuccino.jpg" class="card-img-top" alt="Cappuccino">
+        <div class="card-body text-center">
+          <h3 class="card-name">Cappuccino</h3>
+          <span class="card-price">$22</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card5Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card5Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Cappuccino.jpg" alt="Cappuccino" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$22</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>One shot of espresso (about 30 ml), 1/3 cup steamed milk, 1/3 cup milk foam, cocoa powder or cinnamon for dusting, sugar to taste.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jamaican Blue Mountain (pic7) -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="160">
+        <img src="picture/pic7.jpg" class="card-img-top" alt="Jamaican Blue Mountain Coffee">
+        <div class="card-body text-center">
+          <h3 class="card-name">Blue Mountain Reserve</h3>
+          <span class="card-price">$100</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card6Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card6Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/pic7.jpg" alt="Jamaican Blue Mountain Coffee" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$100</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>100% Jamaican Blue Mountain coffee beans (Arabica), water, and your choice of sugar, sweetener, milk, cream, or a non-dairy alternative. No additives or blends in the authentic, pure version.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- row 4 -->
+  <div class="row g-4 mt-2">
+
+    <!-- Hot Chocolate Americano variant -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600">
+        <img src="picture/Americano.jpg" class="card-img-top" alt="Mocha Americano">
+        <div class="card-body text-center">
+          <h3 class="card-name">Mocha Americano</h3>
+          <span class="card-price">$12</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card7Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card7Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Americano.jpg" alt="Mocha Americano" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$12</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>One shot of espresso or strong brewed coffee, 2-3 teaspoons of chocolate syrup or cocoa powder with sugar, one cup of steamed milk, whipped cream and chocolate shavings as optional garnish.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Iced Coffee (menu version) -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="80">
+        <img src="picture/Iced Coffee.jpg" class="card-img-top" alt="Iced Coffee">
+        <div class="card-body text-center">
+          <h3 class="card-name">Iced Coffee</h3>
+          <span class="card-price">$22</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card8Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card8Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Iced Coffee.jpg" alt="Iced Coffee" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$22</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>One shot of espresso (about 30 ml), 1/3 cup steamed milk, 1/3 cup milk foam, a dusting of cocoa powder or cinnamon, sugar to taste.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latte (menu version, Blue Mountain) -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card menu-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="160">
+        <img src="picture/Latte.jpg" class="card-img-top" alt="Blue Mountain Latte">
+        <div class="card-body text-center">
+          <h3 class="card-name">Blue Mountain Latte</h3>
+          <span class="card-price">$100</span>
+          <button type="button" class="btn-view" data-bs-toggle="modal" data-bs-target="#card9Modal">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="card9Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <img src="picture/Latte.jpg" alt="Blue Mountain Latte" style="width:100%; height:200px; object-fit:cover;">
+                <h1 style="margin-top:14px; color: var(--copper-light); font-size: 1.8rem;">$100</h1>
+              </div>
+              <div class="col-12 col-md-6">
+                <h1 style="font-size: 1.4rem;">Ingredients</h1>
+                <p>100% Jamaican Blue Mountain coffee beans (Arabica), water, sugar or sweeteners, milk, cream, or a non-dairy alternative, with a rare touch of cinnamon or nutmeg for those who prefer it.</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="index.html"><button type="button" class="btn btn-primary">Order Now</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="container" style="margin-top: 120px;" id="about">
+  <span class="eyebrow d-flex justify-content-center mb-2">Our story</span>
+  <h1 class="section-title">ABOUT</h1>
+</div>
+<div class="container about-block" style="margin-top: 40px; padding: 40px; border-radius: var(--radius-lg);" data-aos="fade-up" data-aos-duration="700">
+  <div class="row align-items-center g-4">
+    <!-- Text Column -->
+    <div class="col-12 col-lg-6">
+      <h1 style="color: var(--copper-light); font-size: clamp(1.6rem, 3vw, 2.2rem);">Welcome to DR Coffee House</h1>
+      <p style="color: var(--cream-soft); font-size: 1.02rem; margin-top: 14px;">
+        At DR Coffee House, we believe that coffee is more than just a drink — it's an experience. Nestled in a cozy corner of the city, our café offers a warm, welcoming atmosphere where conversations flow as freely as our freshly brewed coffee.<br><br>
+        We take pride in sourcing premium beans from around the world, roasted to perfection and brewed with love. Whether you're a fan of strong espressos, creamy lattes, or rich mochas, we have something to delight every coffee lover.<br><br>
+        Our menu also features a variety of teas, fresh juices, baked goods, and light snacks — all crafted with quality ingredients and care.<br><br>
+        DR Coffee House isn't just a place to drink coffee; it's a place to relax, work, meet, and unwind. With free Wi-Fi, ambient music, and friendly staff, we ensure you always feel at home.<br><br>
+        <strong>Join us at DR Coffee House — your perfect daily escape.</strong>
+      </p>
+    </div>
+
+    <!-- Image Column -->
+    <div class="col-12 col-lg-6">
+      <img src="picture/coffee restrorent.jpg" alt="DR Coffee House interior" class="img-fluid" style="border-radius: var(--radius-md); width: 100%;">
+    </div>
+  </div>
+</div>
+
+<section class="container contact-section" id="contact">
+    <span class="eyebrow d-flex justify-content-center mb-2">Get in touch</span>
+    <h2 class="text-center mb-4" style="font-family: var(--font-display); color: var(--cream); font-size: clamp(1.8rem, 4vw, 2.6rem);">Contact DR Coffee House</h2>
+    <div class="row g-4">
+      <div class="col-12 col-lg-6" data-aos="fade-right" data-aos-duration="600">
+        <form id="contactForm" novalidate>
+          <div class="mb-3">
+            <label for="name" class="form-label" style="color: var(--cream-soft);">Your Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label" style="color: var(--cream-soft);">Your Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label" style="color: var(--cream-soft);">Your Message</label>
+            <textarea class="form-control" id="message" rows="5" placeholder="Type your message" required></textarea>
+          </div>
+          <button type="submit" class="btn">Send Message</button>
+          <p id="formStatus" class="mt-3 mb-0" style="color: var(--copper-light); font-size: 0.9rem; display:none;">Thank you! Your message has been noted.</p>
+        </form>
+      </div>
+      <div class="col-12 col-lg-6" data-aos="fade-left" data-aos-duration="600">
+        <h5 style="color: var(--copper-light); font-family: var(--font-display);">Our Location</h5>
+        <p style="color: var(--cream-soft);">123 Coffee Street, Karachi, Pakistan</p>
+        <div class="map-responsive">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.809598494784!2d67.00108431445456!3d24.860734184054604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33f96a727c7df%3A0x2a63d49843c7b87f!2sKarachi%20Coffee%20House!5e0!3m2!1sen!2s!4v1612312312345"
+            style="border:0;" allowfullscreen="" loading="lazy" title="DR Coffee House location map">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+<footer class="text-center text-lg-start">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-12 col-md-4">
+        <h5>DR Coffee House</h5>
+        <p>
+          Your cozy corner for premium coffee and warm conversations.
+          We serve freshly brewed blends made from ethically sourced beans.
+          Located in Karachi, we bring community and quality together — one cup at a time.
+        </p>
+        <div class="social-icons mt-3 d-flex justify-content-center justify-content-md-start">
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#OFFER">Offers</a></li>
+          <li><a href="#ALLMENU">Our Menu</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4">
+        <h5>Contact Info</h5>
+        <ul class="list-unstyled">
+          <li><i class="fa-solid fa-phone me-2"></i><strong>Phone:</strong> +92 300 1234567</li>
+          <li><i class="fa-solid fa-envelope me-2"></i><strong>Email:</strong> info@drcoffeehouse.com</li>
+          <li><i class="fa-solid fa-location-dot me-2"></i><strong>Location:</strong> Karachi, Pakistan</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="text-center footer-bottom">
+    &copy; 2026 DR Coffee House. All rights reserved.
+  </div>
+</footer>
+
+<!-- Back to top button -->
+<button id="backToTop" aria-label="Back to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        once: true,
+        offset: 60
+    });
+
+    // Navbar background on scroll
+    const mainNav = document.getElementById('mainNav');
+    const backToTop = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', function () {
+        const scrolled = window.scrollY > 60;
+        mainNav.classList.toggle('scrolled', scrolled);
+        backToTop.classList.toggle('show', window.scrollY > 400);
+    });
+
+    backToTop.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Collapse mobile nav after a link is tapped
+    document.querySelectorAll('#navbarSupportedContent .nav-link').forEach(function (link) {
+        link.addEventListener('click', function () {
+            const navbarCollapse = document.getElementById('navbarSupportedContent');
+            if (navbarCollapse.classList.contains('show')) {
+                bootstrap.Collapse.getOrCreateInstance(navbarCollapse).hide();
+            }
+        });
+    });
+
+    // Simple front-end contact form feedback (no backend wired up)
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!contactForm.checkValidity()) {
+                contactForm.reportValidity();
+                return;
+            }
+            document.getElementById('formStatus').style.display = 'block';
+            contactForm.reset();
+        });
+    }
+</script>
+</body>
+</html>
